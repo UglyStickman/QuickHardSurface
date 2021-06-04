@@ -1,4 +1,4 @@
-# Quick Hard Surface
+# Blender Addon: Quick Hard Surface
 A Blender addon for a more efficient hard surface modelling workflow.
 The following Features are currently supported:
 
