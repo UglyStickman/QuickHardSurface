@@ -1,4 +1,4 @@
-# QuickHardSurface
+# Quick Hard Surface
 The following Features are currently supported:
 
 1.	Make QHS Object:
