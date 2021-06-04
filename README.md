@@ -1,6 +1,6 @@
 # Blender Addon: Quick Hard Surface
 A Blender addon for a more efficient hard surface modelling workflow.
-The following Features are currently supported:
+The following features are currently supported:
 
 1.	Make QHS Object:
 This operator is currently located under the object tab and will add a bevel and weighted normal modifier to a selected mesh, as well as shade it smooth, turn on auto smooth and change some settings in the modifiers.
