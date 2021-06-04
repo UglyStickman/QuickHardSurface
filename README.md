@@ -1,5 +1,5 @@
 # Quick Hard Surface
-An addon for a more efficient hard surface modelling workflow
+A Blender addon for a more efficient hard surface modelling workflow
 The following Features are currently supported:
 
 1.	Make QHS Object:
