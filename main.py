@@ -60,15 +60,16 @@ class MakeQhsObject(bpy.types.Operator):
     def execute(self, context):
         selection = bpy.context.selected_editable_objects
         for obj in selection:
-            bpy.ops.object.shade_smooth()
-            obj.data.use_auto_smooth = True
-            bevel = obj.modifiers.new(name="Bevel", type="BEVEL")
-            bevel.width = 0.02
-            bevel.segments = 3.0
-            bevel.miter_outer = 'MITER_ARC'
-            bevel.use_clamp_overlap = False
-            WeightedNormal = obj.modifiers.new(name="WeightedNormal", type="WEIGHTED_NORMAL")
-            WeightedNormal.keep_sharp = True
+            if obj.type == "MESH":
+                bpy.ops.object.shade_smooth()
+                obj.data.use_auto_smooth = True
+                bevel = obj.modifiers.new(name="Bevel", type="BEVEL")
+                bevel.width = 0.02
+                bevel.segments = 3.0
+                bevel.miter_outer = 'MITER_ARC'
+                bevel.use_clamp_overlap = False
+                WeightedNormal = obj.modifiers.new(name="WeightedNormal", type="WEIGHTED_NORMAL")
+                WeightedNormal.keep_sharp = True
         return {'FINISHED'}
 
 class AddQuadSphere(bpy.types.Operator):
