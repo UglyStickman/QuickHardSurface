@@ -18,6 +18,7 @@ class CustomMenu(bpy.types.Menu):
 class MirrorPopup(bpy.types.Operator):
     bl_idname = "object.mirror_dialog_operator"
     bl_label = "Mirror Settings"
+    bl_options = {'REGISTER', 'UNDO'}
 
     mirrorX: bpy.props.BoolProperty(name="X", default=True)
     mirrorY: bpy.props.BoolProperty(name="Y")
@@ -56,6 +57,7 @@ class MirrorPopup(bpy.types.Operator):
 class MakeQhsObject(bpy.types.Operator):
     bl_idname = "object.make_qhs_object"
     bl_label = "Make QHS Object"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         selection = bpy.context.selected_editable_objects
@@ -71,6 +73,49 @@ class MakeQhsObject(bpy.types.Operator):
                 WeightedNormal = obj.modifiers.new(name="WeightedNormal", type="WEIGHTED_NORMAL")
                 WeightedNormal.keep_sharp = True
         return {'FINISHED'}
+
+class QuickSolidify(bpy.types.Operator):
+    bl_idname = "object.quick_solidify"
+    bl_label = "Add Quick Solidify"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def __init__(self):
+        pass
+
+    def __del__(self):
+        pass
+
+    def execute(self, context):
+        selection = bpy.context.selected_editable_objects
+        for obj in selection:
+            if obj.type == "MESH":
+                obj.modifiers["Solidify"].thickness = 4 - self.mouseY/(bpy.context.window.height/2)*4
+        return {'FINISHED'}
+
+    def modal(self, context, event):
+        if event.type == 'MOUSEMOVE':  # Apply
+            self.mouseY = event.mouse_y
+            print(self.mouseY)
+            self.execute(context)
+        elif event.type == 'LEFTMOUSE':  # Confirm
+            return {'FINISHED'}
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:  # Cancel
+            selection = bpy.context.selected_editable_objects
+            for obj in selection:
+                if obj.type == "MESH":
+                    obj.modifiers.remove(obj.modifiers.get("Solidify"))
+            return {'CANCELLED'}
+
+        return {'RUNNING_MODAL'}
+
+    def invoke(self, context, event):
+        self.mouseY = event.mouse_y
+        selection = bpy.context.selected_editable_objects
+        for obj in selection:
+            if obj.type == "MESH":
+                obj.modifiers.new(name="Solidify", type="SOLIDIFY")
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
 
 class AddQuadSphere(bpy.types.Operator):
     bl_idname = "object.quad_shere_add"
@@ -100,6 +145,7 @@ def register():
     bpy.utils.register_class(MakeQhsObject)
     bpy.utils.register_class(MirrorPopup)
     bpy.utils.register_class(AddQuadSphere)
+    bpy.utils.register_class(QuickSolidify)
     #Menu:
     bpy.types.VIEW3D_MT_object.append(CustomMenu.draw)
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
@@ -108,6 +154,8 @@ def register():
     kc = wm.keyconfigs.addon
     km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
     kmi = km.keymap_items.new(MirrorPopup.bl_idname, type="M", value='PRESS', alt=True, ctrl=True)
+    km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
+    kmi = km.keymap_items.new(QuickSolidify.bl_idname, type="S", value='PRESS', alt=True, ctrl=True)
     addon_keymaps.append((km, kmi))
 
 def unregister():
@@ -118,6 +166,7 @@ def unregister():
     bpy.utils.unregister_class(MakeQhsObject)
     bpy.utils.unregister_class(MirrorPopup)
     bpy.utils.unregister_class(AddQuadSphere)
+    bpy.utils.unregister_class(QuickSolidify)
 
 
 if __name__ == "__main__":
