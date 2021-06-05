@@ -1,7 +1,7 @@
 import bpy
 
 bl_info = {
-    "name": "My Hard Surface Modelling Addon",
+    "name": "Quick Hard Surface",
     "category": "3D View",
     "blender": (2, 92, 0)
 }
